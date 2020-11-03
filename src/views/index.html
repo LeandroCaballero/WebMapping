@@ -71,6 +71,10 @@
         L.control.layers(baseLayers, overlays).addTo(map);       
 
         function onEachFeatureDpto(feature, layer) {
+            layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight
+		})
             if (feature.properties && feature.properties.nam) {
                 layer.bindPopup(feature.properties.nam);
             }
@@ -83,6 +87,29 @@
         }
 
         L.control.scale().addTo(map);    //escala
+
+        //Estilos
+        function highlightFeature(e) {
+		    var layer = e.target;
+
+		    layer.setStyle({
+		    	weight: 5,
+		    	color: '#EC340D',
+		    	dashArray: '',
+		    	fillOpacity: 0.7
+		    });
+
+		    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+		    	layer.bringToFront();
+		    }
+
+	    }
+
+	function resetHighlight(e) {
+		dpto.resetStyle(e.target);
+		
+	}
+
 
     </script>
 </body>
