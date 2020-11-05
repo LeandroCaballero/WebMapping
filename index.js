@@ -9,9 +9,12 @@
         mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
     var streets = L.tileLayer(mbUrl, { id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr }),
         grayscale = L.tileLayer(mbUrl, { id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr });
-    var dpto = L.geoJSON(departamentos, {
-        onEachFeature: onEachFeatureDpto
+    
+    var dpto = L.geoJSON(escuelasXDpto, {
+        onEachFeature: onEachFeatureDpto,
+        style: style
     })
+    
     var hospitales = L.geoJSON(hosp, {
         onEachFeature: onEachFeatureHosp
     })
@@ -29,7 +32,7 @@
     };
     var overlays = {   //se pueden combinar capas
         "Ciudades": cities,
-        "Departamentos de Chaco": dpto,
+        "Cantidad de escuelas por Departamento": dpto,
         "Hospitales de Chaco": hospitales,
         "Buffer": areasInf
     };
@@ -71,4 +74,26 @@
 	function resetHighlight(e) {
 		dpto.resetStyle(e.target);
 		
-	}
+    }
+    
+    //Colores distintos para la cantidad de escuelas
+    function getColor(d) {
+        return d > 786 ? '#bd0026' :
+               d > 365 ? '#f03b20' :
+               d > 256 ? '#fd8d3c' :
+               d > 140 ? '#feb24c' :
+               d > 87  ? '#fed976' :
+                         '#ffffb2';
+    }
+
+    function style(feature) {
+        return {
+            fillColor: getColor(feature.properties.Cnt_FDEPAR),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+        };
+    }
+
