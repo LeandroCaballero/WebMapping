@@ -3,10 +3,12 @@ var corrientes = L.marker([-27.46784, -58.8344]).bindPopup('Corrientes, Corrient
     formosa = L.marker([-26.1833, -58.1833]).bindPopup('Formosa, Formosa'),
     misiones = L.marker([-27.3998, -55.933]).bindPopup('Posadas, Misiones');
 var cities = L.layerGroup([corrientes, chaco, formosa, misiones]);
+
 var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
     '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
     'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
 var streets = L.tileLayer(mbUrl, { id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr }),
     grayscale = L.tileLayer(mbUrl, { id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr });
 
@@ -21,6 +23,10 @@ var hospitales = L.geoJSON(hosp, {
 
 var areasInf = L.geoJSON(buffer)
 
+var rutas = L.geoJSON(rut, {
+    onEachFeature: onEachFeatureRutas
+})
+
 var map = L.map('map', {
     center: [-34.6083, -58.3712],
     zoom: 5,
@@ -32,6 +38,7 @@ var baseLayers = {   //se elige una sola capa
 };
 var overlays = {   //se pueden combinar capas
     "Ciudades": cities,
+    "Rutas Provinciales y Nacionales": rutas,
     "Cantidad de escuelas por Departamento": dpto,
     "Hospitales de Chaco": hospitales,
     "Buffer": areasInf
@@ -57,6 +64,13 @@ function onEachFeatureHosp(feature, layer) {
         layer.bindPopup(feature.properties.fna);
     }
 }
+
+function onEachFeatureRutas(feature, layer) {
+    if (feature.properties && feature.properties.nr) {
+        layer.bindPopup("<div style=text-align:center><h3>Ruta Nº: " + feature.properties.nr)+"<h3></div>";
+    }
+}
+
 
 L.control.scale().addTo(map);    //escala
 
