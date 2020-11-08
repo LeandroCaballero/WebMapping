@@ -27,7 +27,8 @@ var escUrbanas = L.geoJSON(urbanas, {
         weight: 1,
         opacity : 1,
         fillOpacity : 0.8
-    }
+    },
+    onEachFeature: onEachFeatureEscuelas
 })
 
 var escRurales = L.geoJSON(rurales, {
@@ -40,10 +41,11 @@ var escRurales = L.geoJSON(rurales, {
         weight: 1,
         opacity : 1,
         fillOpacity : 0.8
-    }
+    },
+    onEachFeature: onEachFeatureEscuelas
 })
 
-var areasInf = L.geoJSON(buffer)
+var areasInfRural = L.geoJSON(area)
 
 var rutas = L.geoJSON(rut, {
     onEachFeature: onEachFeatureRutas
@@ -67,7 +69,7 @@ var overlays = {   //se pueden combinar capas
     "Escuelas Rurales": escRurales,
     "Rutas Provinciales y Nacionales": rutas,
     "Cantidad de escuelas por Departamento": dpto,
-    "Buffer": areasInf
+    "Area de influencia de escuelas rurales": areasInfRural
 };
 
 L.control.layers(baseLayers, overlays).addTo(map);
@@ -86,15 +88,10 @@ function onEachFeatureDpto(feature, layer) {
     }
 }
 
-// function onEachFeatureHosp(feature, layer) {
-//     if (feature.properties && feature.properties.fna) {
-//         layer.bindPopup(feature.properties.fna);
-//     }
-// }
 
 function onEachFeatureEscuelas(feature, layer) {
     if (feature.properties && feature.properties.NOMBRE_DE_) {
-        layer.bindPopup(feature.properties.NOMBRE_DE_);
+        layer.bindPopup(feature.properties.NOMBRE_DE_ + "" + feature.geometry.coordinates + "" + feature.properties.NIVEL);
     }
 }
 
