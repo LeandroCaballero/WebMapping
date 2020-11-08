@@ -17,7 +17,31 @@ var dpto = L.geoJSON(escuelasXDpto, {
     style: style
 })
 
-var escUrbanas = L.geoJSON(urbanas)
+var escUrbanas = L.geoJSON(urbanas, {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, MarkerOptions);
+    },
+    style: {
+        radius: 3,
+        color: "#ff0000",
+        weight: 1,
+        opacity : 1,
+        fillOpacity : 0.8
+    }
+})
+
+var escRurales = L.geoJSON(rurales, {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, MarkerOptions);
+    },
+    style: {
+        radius: 3,
+        color: "#008f39",
+        weight: 1,
+        opacity : 1,
+        fillOpacity : 0.8
+    }
+})
 
 var areasInf = L.geoJSON(buffer)
 
@@ -39,13 +63,15 @@ var baseLayers = {   //se elige una sola capa
 };
 var overlays = {   //se pueden combinar capas
     "Ciudades": cities,
-    "Escuelas": escUrbanas,
+    "Escuelas Urbanas": escUrbanas,
+    "Escuelas Rurales": escRurales,
     "Rutas Provinciales y Nacionales": rutas,
     "Cantidad de escuelas por Departamento": dpto,
     "Buffer": areasInf
 };
 
 L.control.layers(baseLayers, overlays).addTo(map);
+
 
 function onEachFeatureDpto(feature, layer) {
     layer.on({
@@ -121,3 +147,11 @@ function style(feature) {
     };
 }
 
+var MarkerOptions = {
+    radius: 8,
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+};
