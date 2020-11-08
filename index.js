@@ -91,7 +91,7 @@ function onEachFeatureDpto(feature, layer) {
 
 function onEachFeatureEscuelas(feature, layer) {
     if (feature.properties && feature.properties.NOMBRE_DE_) {
-        layer.bindPopup(feature.properties.NOMBRE_DE_ + "" + feature.geometry.coordinates + "" + feature.properties.NIVEL);
+        layer.bindPopup(feature.properties.NOMBRE_DE_);
     }
 }
 
