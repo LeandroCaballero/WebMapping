@@ -26,6 +26,9 @@ var areasInf = L.geoJSON(buffer)
 var rutas = L.geoJSON(rut, {
     onEachFeature: onEachFeatureRutas
 })
+var escuelas = L.geoJSON(esc, {
+    onEachFeature: onEachFeatureEscuelas
+})
 
 var map = L.map('map', {
     center: [-34.6083, -58.3712],
@@ -38,6 +41,7 @@ var baseLayers = {   //se elige una sola capa
 };
 var overlays = {   //se pueden combinar capas
     "Ciudades": cities,
+    //"Escuelas": escuelas,
     "Rutas Provinciales y Nacionales": rutas,
     "Cantidad de escuelas por Departamento": dpto,
     "Hospitales de Chaco": hospitales,
@@ -65,9 +69,15 @@ function onEachFeatureHosp(feature, layer) {
     }
 }
 
+function onEachFeatureEscuelas(feature, layer) {
+    if (feature.properties && feature.properties.NOMBRE_DE_) {
+        layer.bindPopup(feature.properties.NOMBRE_DE_);
+    }
+}
+
 function onEachFeatureRutas(feature, layer) {
     if (feature.properties && feature.properties.nr) {
-        layer.bindPopup("<div style=text-align:center><h3>Ruta Nº: " + feature.properties.nr)+"<h3></div>";
+        layer.bindPopup("<div style=text-align:center><h3>Ruta Nº: " + feature.properties.nr) + "<h3></div>";
     }
 }
 
