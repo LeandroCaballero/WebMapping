@@ -17,18 +17,16 @@ var dpto = L.geoJSON(escuelasXDpto, {
     style: style
 })
 
-var hospitales = L.geoJSON(hosp, {
-    onEachFeature: onEachFeatureHosp
-})
+var escUrbanas = L.geoJSON(urbanas)
 
 var areasInf = L.geoJSON(buffer)
 
 var rutas = L.geoJSON(rut, {
     onEachFeature: onEachFeatureRutas
 })
-var escuelas = L.geoJSON(esc, {
-    onEachFeature: onEachFeatureEscuelas
-})
+// var escuelas = L.geoJSON(esc, {
+//     onEachFeature: onEachFeatureEscuelas
+// })
 
 var map = L.map('map', {
     center: [-34.6083, -58.3712],
@@ -41,10 +39,9 @@ var baseLayers = {   //se elige una sola capa
 };
 var overlays = {   //se pueden combinar capas
     "Ciudades": cities,
-    //"Escuelas": escuelas,
+    "Escuelas": escUrbanas,
     "Rutas Provinciales y Nacionales": rutas,
     "Cantidad de escuelas por Departamento": dpto,
-    "Hospitales de Chaco": hospitales,
     "Buffer": areasInf
 };
 
@@ -63,11 +60,11 @@ function onEachFeatureDpto(feature, layer) {
     }
 }
 
-function onEachFeatureHosp(feature, layer) {
-    if (feature.properties && feature.properties.fna) {
-        layer.bindPopup(feature.properties.fna);
-    }
-}
+// function onEachFeatureHosp(feature, layer) {
+//     if (feature.properties && feature.properties.fna) {
+//         layer.bindPopup(feature.properties.fna);
+//     }
+// }
 
 function onEachFeatureEscuelas(feature, layer) {
     if (feature.properties && feature.properties.NOMBRE_DE_) {
