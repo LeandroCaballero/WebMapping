@@ -17,6 +17,11 @@ var dpto = L.geoJSON(escuelasXDpto, {
     style: style
 })
 
+var matricula = L.geoJSON(mat, {
+    onEachFeature: onEachFeatureDptoMat,
+    style: styleMat
+})
+
 var escUrbanas = L.geoJSON(urbanas, {
     pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, MarkerOptions);
@@ -25,8 +30,8 @@ var escUrbanas = L.geoJSON(urbanas, {
         radius: 3,
         color: "#ff0000",
         weight: 1,
-        opacity : 1,
-        fillOpacity : 0.8
+        opacity: 1,
+        fillOpacity: 0.8
     },
     onEachFeature: onEachFeatureEscuelas
 })
@@ -39,8 +44,8 @@ var escRurales = L.geoJSON(rurales, {
         radius: 3,
         color: "#008f39",
         weight: 1,
-        opacity : 1,
-        fillOpacity : 0.8
+        opacity: 1,
+        fillOpacity: 0.8
     },
     onEachFeature: onEachFeatureEscuelas
 })
@@ -68,8 +73,9 @@ var overlays = {   //se pueden combinar capas
     "Escuelas Urbanas": escUrbanas,
     "Escuelas Rurales": escRurales,
     "Rutas Provinciales y Nacionales": rutas,
-    "Cantidad de escuelas por Departamento": dpto,
-    "Area de influencia de escuelas rurales": areasInfRural
+    "Cantidad de Escuelas por Departamento": dpto,
+    "Matricula por Departamento": matricula,
+    "Area de influencia de escuelas rurales (Radio de 10Km)": areasInfRural
 };
 
 L.control.layers(baseLayers, overlays).addTo(map);
@@ -89,9 +95,26 @@ function onEachFeatureDpto(feature, layer) {
 }
 
 
+function onEachFeatureDptoMat(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlightMat
+    })
+    if (feature.properties && feature.properties.nam) {
+        layer.bindPopup(
+            "<div style=text-align:center><h3>" + feature.properties.nam +
+            "<h3></div><hr><table><tr></tr><tr><td>Matricula: " + feature.properties.Sum_MATRIC +
+            "</td></tr></table>");
+    }
+}
+
+
 function onEachFeatureEscuelas(feature, layer) {
     if (feature.properties && feature.properties.NOMBRE_DE_) {
-        layer.bindPopup(feature.properties.NOMBRE_DE_);
+        layer.bindPopup("<div style=text-align:center><h3>" + feature.properties.NOMBRE_DE_ +
+            "<h3></div><hr><table><tr></tr><tr><td>Nivel: " + feature.properties.NIVEL +
+            "</td></tr><tr><td>Internet: " + feature.properties.INTERNET__ +
+            "</td></tr></table>");
     }
 }
 
@@ -123,6 +146,10 @@ function resetHighlight(e) {
 
 }
 
+function resetHighlightMat(e) {
+    matricula.resetStyle(e.target);
+}
+
 //Colores distintos para la cantidad de escuelas
 function getColor(d) {
     return d > 786 ? '#bd0026' :
@@ -133,9 +160,29 @@ function getColor(d) {
                         '#ffffb2';
 }
 
+function getColorMat(d) {
+    return d > 58026 ? '#006837' :
+        d > 36864 ? '#31a354' :
+            d > 19923 ? '#78c679' :
+                d > 9525 ? '#addd8e' :
+                    '#d9f0a3'
+
+}
+
 function style(feature) {
     return {
         fillColor: getColor(feature.properties.Cnt_FDEPAR),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+
+function styleMat(feature) {
+    return {
+        fillColor: getColorMat(feature.properties.Sum_MATRIC),
         weight: 2,
         opacity: 1,
         color: 'white',
