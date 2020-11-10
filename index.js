@@ -101,8 +101,12 @@ var cabeceras = L.geoJSON(cab, {
 
 
 //Areas de influencia 
-var areasInfRural = L.geoJSON(area)
-var areaInfPrimaria = L.geoJSON(infPrim)
+var areasInfRural = L.geoJSON(area, {
+    style: styleBuffer
+})
+var areaInfPrimaria = L.geoJSON(infPrim, {
+    style: styleBuffer
+})
 
 
 //Red vial
@@ -280,6 +284,12 @@ function styleMat(feature) {
         dashArray: '3',
         fillOpacity: 0.7
     };
+}
+
+function styleBuffer(){
+    return{
+        color: "#ff8000"
+    }
 }
 
 var MarkerOptions = {
