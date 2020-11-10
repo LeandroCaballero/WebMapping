@@ -50,10 +50,66 @@ var escRurales = L.geoJSON(rurales, {
     onEachFeature: onEachFeatureEscuelas
 })
 
+//Clasificacion por nivel
+var nivelInicial = L.geoJSON(inicial, {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, MarkerOptions);
+    },
+    style: {
+        radius: 3,
+        color: "#008f39",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    },
+    onEachFeature: onEachFeatureEscuelas
+})
+
+var nivelPrimaria = L.geoJSON(primaria, {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, MarkerOptions);
+    },
+    style: {
+        radius: 3,
+        color: "#008f39",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    },
+    onEachFeature: onEachFeatureEscuelas
+})
+
+var nivelSecundaria = L.geoJSON(secundaria, {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, MarkerOptions);
+    },
+    style: {
+        radius: 3,
+        color: "#008f39",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    },
+    onEachFeature: onEachFeatureEscuelas
+})
+
+
+//Cabeceras
+var cabeceras = L.geoJSON(cab, {
+    onEachFeature: onEachFeatureLoc
+})
+
+
+//Areas de influencia 
 var areasInfRural = L.geoJSON(area)
 
+
+//Red vial
 var rutas = L.geoJSON(rut, {
-    onEachFeature: onEachFeatureRutas
+    onEachFeature: onEachFeatureRutas,
+    style: {
+        color: "#9b9b9b"
+    }
 })
 // var escuelas = L.geoJSON(esc, {
 //     onEachFeature: onEachFeatureEscuelas
@@ -64,23 +120,28 @@ var map = L.map('map', {
     zoom: 5,
     layers: [streets]   //lo visualizado por defecto
 });
+
 var baseLayers = {   //se elige una sola capa
     "Calles": streets,
     "Escala Gris": grayscale
 };
+
 var overlays = {   //se pueden combinar capas
-    "Ciudades": cities,
+    "Ciudades": cabeceras,
     "Escuelas Urbanas": escUrbanas,
     "Escuelas Rurales": escRurales,
     "Rutas Provinciales y Nacionales": rutas,
     "Cantidad de Escuelas por Departamento": dpto,
     "Matricula por Departamento": matricula,
-    "Area de influencia de escuelas rurales (Radio de 10Km)": areasInfRural
+    "Area de influencia de Escuelas Rurales (Radio de 10Km)": areasInfRural,
+    "Nivel inicial": nivelInicial,
+    "Nivel primaria": nivelPrimaria,
+    "Nivel secundaria": nivelSecundaria,
 };
 
 L.control.layers(baseLayers, overlays).addTo(map);
 
-
+//OneEachFeature
 function onEachFeatureDpto(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
@@ -93,7 +154,6 @@ function onEachFeatureDpto(feature, layer) {
             "</td></tr></table>");
     }
 }
-
 
 function onEachFeatureDptoMat(feature, layer) {
     layer.on({
@@ -108,22 +168,32 @@ function onEachFeatureDptoMat(feature, layer) {
     }
 }
 
-
 function onEachFeatureEscuelas(feature, layer) {
+
     if (feature.properties && feature.properties.NOMBRE_DE_) {
         layer.bindPopup("<div style=text-align:center><h3>" + feature.properties.NOMBRE_DE_ +
             "<h3></div><hr><table><tr></tr><tr><td>Nivel: " + feature.properties.NIVEL +
             "</td></tr><tr><td>Internet: " + feature.properties.INTERNET__ +
             "</td></tr></table>");
     }
+
 }
 
 function onEachFeatureRutas(feature, layer) {
     if (feature.properties && feature.properties.nr) {
-        layer.bindPopup("<div style=text-align:center><h3>Ruta Nº: " + feature.properties.nr) + "<h3></div>";
+        layer.bindPopup("<div style=text-align:center><h3>Ruta Nº: " + feature.properties.nr);
     }
 }
 
+function onEachFeatureLoc(feature, layer) {
+    layer.on({
+        click: zoomToFeature
+    });
+
+    if (feature.properties && feature.properties.fna) {
+        layer.bindPopup(feature.properties.fna);
+    }
+}
 
 L.control.scale().addTo(map);    //escala
 
@@ -160,6 +230,7 @@ function getColor(d) {
                         '#ffffb2';
 }
 
+//Colores distintos para cantidad de matricula
 function getColorMat(d) {
     return d > 58026 ? '#006837' :
         d > 36864 ? '#31a354' :
@@ -199,3 +270,10 @@ var MarkerOptions = {
     opacity: 1,
     fillOpacity: 0.8
 };
+
+//Zoom
+function zoomToFeature(e) {
+    var latLngs = [e.target.getLatLng()];
+    var markerBounds = L.latLngBounds(latLngs);
+    map.fitBounds(markerBounds, 7);
+}
