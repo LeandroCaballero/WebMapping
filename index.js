@@ -50,7 +50,7 @@ var escRurales = L.geoJSON(rurales, {
     onEachFeature: onEachFeatureEscuelas
 })
 
-//Clasificacion por nivel
+//Clasificacion por nivel 
 var nivelInicial = L.geoJSON(inicial, {
     pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, MarkerOptions);
@@ -71,7 +71,7 @@ var nivelPrimaria = L.geoJSON(primaria, {
     },
     style: {
         radius: 3,
-        color: "#008f39",
+        color: "#0000FF",
         weight: 1,
         opacity: 1,
         fillOpacity: 0.8
@@ -85,7 +85,7 @@ var nivelSecundaria = L.geoJSON(secundaria, {
     },
     style: {
         radius: 3,
-        color: "#008f39",
+        color: "#FF0000",
         weight: 1,
         opacity: 1,
         fillOpacity: 0.8
@@ -102,6 +102,7 @@ var cabeceras = L.geoJSON(cab, {
 
 //Areas de influencia 
 var areasInfRural = L.geoJSON(area)
+var areaInfPrimaria = L.geoJSON(infPrim)
 
 
 //Red vial
@@ -111,10 +112,16 @@ var rutas = L.geoJSON(rut, {
         color: "#9b9b9b"
     }
 })
-// var escuelas = L.geoJSON(esc, {
-//     onEachFeature: onEachFeatureEscuelas
-// })
 
+var escPriResis = L.geoJSON(escPrimariasResistencia, {
+    onEachFeature: onEachFeatureEscuelas
+})
+
+//LayerGroups
+var influencia = L.layerGroup([areaInfPrimaria, escPriResis])
+var influenciaRur = L.layerGroup([areasInfRural, escRurales])
+
+//Mapa
 var map = L.map('map', {
     center: [-34.6083, -58.3712],
     zoom: 5,
@@ -126,20 +133,33 @@ var baseLayers = {   //se elige una sola capa
     "Escala Gris": grayscale
 };
 
-var overlays = {   //se pueden combinar capas
-    "Ciudades": cabeceras,
-    "Escuelas Urbanas": escUrbanas,
-    "Escuelas Rurales": escRurales,
-    "Rutas Provinciales y Nacionales": rutas,
-    "Cantidad de Escuelas por Departamento": dpto,
-    "Matricula por Departamento": matricula,
-    "Area de influencia de Escuelas Rurales (Radio de 10Km)": areasInfRural,
-    "Nivel inicial": nivelInicial,
-    "Nivel primaria": nivelPrimaria,
-    "Nivel secundaria": nivelSecundaria,
+var groupedOverlays = {
+    "Ciudades": {
+        "Localidades": cabeceras,
+    },
+    "Escuelas por Ámbito": {
+        "Urbanas": escUrbanas,
+        "Rurales": escRurales
+    },
+    "Escuelas por Nivel": {
+        "Inicial": nivelInicial,
+        "Primaria": nivelPrimaria,
+        "Secundaria": nivelSecundaria
+    },
+    "Areas de Influencia": {
+        "Área de influencia de Escuelas Rurales (Radio de 10 km)": influenciaRur,
+        "Área de influencia de Escuelas Primarias en Resistencia (Radio de 500 m)": influencia
+    },
+    "Red Vial": {
+        "Rutas Provinciales y Nacionales del Chaco": rutas
+    },
+    "Información Departamental": {
+        "Cantidad de Escuelas por Departamento": dpto,
+        "Matricula por Departamento": matricula
+    }
 };
 
-L.control.layers(baseLayers, overlays).addTo(map);
+L.control.groupedLayers(baseLayers, groupedOverlays).addTo(map);
 
 //OneEachFeature
 function onEachFeatureDpto(feature, layer) {
