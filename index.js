@@ -28,7 +28,7 @@ var escUrbanas = L.geoJSON(urbanas, {
     },
     style: {
         radius: 3,
-        color: "#ff0000",
+        color: "#4c2882",
         weight: 1,
         opacity: 1,
         fillOpacity: 0.8
@@ -42,7 +42,7 @@ var escRurales = L.geoJSON(rurales, {
     },
     style: {
         radius: 3,
-        color: "#008f39",
+        color: "#ff8000",
         weight: 1,
         opacity: 1,
         fillOpacity: 0.8
@@ -113,11 +113,21 @@ var areaInfPrimaria = L.geoJSON(infPrim, {
 var rutas = L.geoJSON(rut, {
     onEachFeature: onEachFeatureRutas,
     style: {
-        color: "#9b9b9b"
+        color: "#000000"
     }
 })
 
 var escPriResis = L.geoJSON(escPrimariasResistencia, {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, MarkerOptions);
+    },
+    style: {
+        radius: 3,
+        color: "#0000FF",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    },
     onEachFeature: onEachFeatureEscuelas
 })
 
@@ -307,3 +317,6 @@ function zoomToFeature(e) {
     var markerBounds = L.latLngBounds(latLngs);
     map.fitBounds(markerBounds, 7);
 }
+
+// var distancia = map.distance([-27.46784, -58.8344] ,[-27.46056, -58.98389])
+// console.log(distancia)
